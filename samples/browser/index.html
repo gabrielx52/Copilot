@@ -11,6 +11,7 @@
 
         <!-- Google fonts -->
         <link href="https://fonts.googleapis.com/css?family=Lato:900i" rel="stylesheet">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 
     </head>
     <body>
@@ -86,6 +87,7 @@
                 <td>
                     <button type="button" id="startBtn" class="btn btn-success">Start</button>
                     <button type="button" id="stopBtn" disabled="disabled" class="btn btn-danger">Stop</button>
+                    <button type="button" id="refreshBtn" class="btn btn-primary" onClick="window.location.reload();">Clear</button>
                     <input type="file" id="filePicker" accept=".wav" style="display:none"/>
                 </td>
             </tr>
@@ -281,6 +283,7 @@
                         console.log(JSON.stringify(event.Result)); // check console for other information in result
                         break;
                     case "SpeechSimplePhraseEvent" :
+                        sentiment(JSON.stringify(event.Result.DisplayText))
                         UpdateRecognizedPhrase(JSON.stringify(event.Result, null, 3));
                         break;
                     case "SpeechDetailedPhraseEvent" :
@@ -434,12 +437,20 @@
             phraseDiv.innerHTML += json + "\n";
 
             outputContainer = document.getElementById("output")
-            output.push(JSON.parse(json)['DisplayText'])
-
-            var li = document.createElement("li")
-            outputContainer.appendChild(li)
-            var element = output.length
-            li.innerHTML += output[element - 1] + "\n";
+            if(JSON.parse(json)['DisplayText'].toLowerCase() != 'replay.'){
+                output.push(JSON.parse(json)['DisplayText'])
+                var li = document.createElement("li")
+                outputContainer.appendChild(li)
+                var element = output.length
+                li.innerHTML += output[element - 1] + "\n";
+            } else {
+                let string = ""
+                for(var i = 0; i < output.length; i++){
+                    string += output[i].slice(0, -1) + " "
+                }
+                console.log(string)
+                replay(string)
+            }
 
             for(var i = 0; i < output.length; i++){
 
@@ -464,7 +475,7 @@
                     runwayMarked = true
                 }
 
-                if(output[i].toLowerCase().includes('airport') && !airportMarked){
+                if(output[i].toLowerCase().includes('airport') && !airportMarked || output[i].toLowerCase().includes('ground') && !airportMarked || output[i].toLowerCase().includes('tower') && !airportMarked){
                     console.log('output[i]', output[i])
                     var airport = document.getElementById("airport")
                     airport.innerHTML += output[i]
@@ -486,13 +497,12 @@
                         var lat = airports['spokane'][0]
                         var long = airports['spokane'][1]
                         initMap()
-                    }
-                            
+                    }         
                 }
+                    
 
             }
 
-            console.log('output', output)
         }
 
         function OnComplete() {
@@ -500,7 +510,55 @@
             stopBtn.disabled = true;
 
         }
+
+        function replay(tts){
+        $.ajax({
+                method:"GET",
+                url: "https://johnfirstnode.mybluemix.net/tts?text_to_say=" + tts
+                    })
+    }
+
+    function sentiment(phrase){
+    var params = {
+    };
+    var body = {
+      "documents": [
+        {
+          "language": "en-US",
+          "id": "3424344234234",
+          "text": phrase
+        }
+      ]
+    }
+    $.ajax({
+        url: "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment?" + $.param(params),
+        beforeSend: function(xhrObj){
+            // Request headers
+            xhrObj.setRequestHeader("Content-Type","application/json");
+            xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","30260b2632ae4476992b546e95c37eb9");
+        },
+        type: "POST",
+        // Request body
+        data: JSON.stringify(body),
+    })
+    .done(function(data) {
+        const score = data.documents[0].score
+        if (score < 0.3)
+            alert('Sounds like you need some help!')
+
+        // alert("success");
+        alert(data.documents[0].score)
+    })
+    .fail(function(err) {
+        alert("error");
+        console.log(err)
+    });
+}
+
     </script>
+
+    
+
     </body>
 </html>
 
