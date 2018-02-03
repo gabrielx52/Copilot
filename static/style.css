@@ -1,3 +1,9 @@
+#header0 {
+    height: 1rem;
+    background-color: #1b1b8d;
+    border-bottom: white solid thick;
+}
+
 header {
     height: 4.5rem;
     background-color: skyblue;
