@@ -154,9 +154,7 @@
                             <span id="hypothesisDiv" style="width:200px;height:200px;display:block;"></span>
                             <span id="statusDiv"></span>
                         </div>
-                        <div id="weather">
-                            <img id="vmap" src="http://vfrmap.com/api?req=map&type=sectc&lat=48.648103&lon=-123.428660&zoom=10">
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -425,6 +423,11 @@
         var identMarked = false
         var runwayMarked = false
         var airportMarked = false
+        let airports = {
+            'victoria': [48.648103, -123.428660],
+            'portland': [45.589769, -122.595094],
+            'spokane': [47.621748, -117.534812]
+        }
 
         function UpdateRecognizedPhrase(json) {
             hypothesisDiv.innerHTML = "";
@@ -466,9 +469,28 @@
                     var airport = document.getElementById("airport")
                     airport.innerHTML += output[i]
                     airportMarked = true
-                }
-            }
 
+                    function initMap() {
+                        var uluru = {lat: lat, lng: long};
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                          zoom: 14,
+                          center: uluru,
+                          mapTypeId: 'satellite'
+                      });
+                    }
+                    if(output[i].toLowerCase().includes('portland')){
+                        var lat = airports['portland'][0]
+                        var long = airports['portland'][1]
+                        initMap()
+                    } else if (output[i].toLowerCase().includes('spokane')){
+                        var lat = airports['spokane'][0]
+                        var long = airports['spokane'][1]
+                        initMap()
+                    }
+                            
+                }
+
+            }
 
             console.log('output', output)
         }
@@ -479,7 +501,6 @@
 
         }
     </script>
-
     </body>
 </html>
 
