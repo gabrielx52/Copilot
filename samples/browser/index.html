@@ -33,7 +33,7 @@
             </tr>
             <tr>
                 <td align="right">Subscription</td>
-                <td><input id="key" type="text" size="40" value="key"></td>
+                <td><input id="key" type="text" size="40" value="d4edcc3a4e3442799b5d85ac3e2c03d4"></td>
             </tr>
             <tr style="display:none">
                 <td align="right">Language:</td>
@@ -146,10 +146,10 @@
                         <div id="top-right">
                             
                             <ul class="list-group list-group-flush" id="post-it">
-                            <li class="list-group-item"><b>Frequency:</b> </li>
-                            <li class="list-group-item"><b>Ident:</b> </li>
-                            <li class="list-group-item"><b>Runway:</b> </li>
-                            <li class="list-group-item"><b>Airport:</b> </li>
+                            <li class="list-group-item" id="frequency"><b>Frequency:</b> </li>
+                            <li class="list-group-item" id="ident"><b>Ident:</b> </li>
+                            <li class="list-group-item" id="runway"><b>Runway:</b> </li>
+                            <li class="list-group-item" id="airport"><b>Airport:</b> </li>
                             <li class="list-group-item" id="output" style="overflow-y: scroll;"><b>Full transmission:</b> </li>
                             </ul>
                         </div>
@@ -420,6 +420,10 @@
         }
 
         let output = []
+         var freqMarked = false
+        var identMarked = false
+        var runwayMarked = false
+        var airportMarked = false
 
         function UpdateRecognizedPhrase(json) {
             hypothesisDiv.innerHTML = "";
@@ -428,10 +432,43 @@
             outputContainer = document.getElementById("output")
             output.push(JSON.parse(json)['DisplayText'])
 
-            var para = document.createElement("li")
-            outputContainer.appendChild(para)
-            element = output.length
-            para.innerHTML += output[element - 1] + "\n";
+            var li = document.createElement("li")
+            outputContainer.appendChild(li)
+            var element = output.length
+            li.innerHTML += output[element - 1] + "\n";
+
+            for(var i = 0; i < output.length; i++){
+
+                if(output[i].toLowerCase().includes('frequency') && !freqMarked){
+                    console.log('output[i]', output[i])
+                    var freqEl = document.getElementById("frequency")
+                    freqEl.innerHTML += output[i]
+                    freqMarked = true
+                }
+
+                if(output[i].toLowerCase().includes('ident') && !identMarked){
+                    console.log('output[i]', output[i])
+                    var ident = document.getElementById("ident")
+                    ident.innerHTML += output[i]
+                    identMarked = true
+                }
+
+                if(output[i].toLowerCase().includes('runway') && !runwayMarked){
+                    console.log('output[i]', output[i])
+                    var runway = document.getElementById("runway")
+                    runway.innerHTML += output[i]
+                    runwayMarked = true
+                }
+
+                if(output[i].toLowerCase().includes('airport') && !airportMarked){
+                    console.log('output[i]', output[i])
+                    var airport = document.getElementById("airport")
+                    airport.innerHTML += output[i]
+                    airportMarked = true
+                }
+            }
+
+
             console.log('output', output)
         }
 
