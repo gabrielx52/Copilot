@@ -548,10 +548,10 @@
         const score = data.documents[0].score
         var elem = document.getElementById('bottom-right')
         var war = document.getElementById("warn")
-        if (score < 0.3) {
+        if (score < 0.2) {
             elem.style.backgroundColor = "red";
             war.style.display = "inline"; }
-        else if (score < 0.6) {
+        else if (score < 0.5) {
             elem.style.backgroundColor = "orange";
             war.style.display = "none";
         }
