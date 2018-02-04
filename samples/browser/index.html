@@ -11,21 +11,111 @@
 
         <!-- Google fonts -->
         <link href="https://fonts.googleapis.com/css?family=Lato:900i" rel="stylesheet">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 
     </head>
     <body>
+        <div id="header0"></div>
         <header>
             <h1 id="title">CO-PILOT</h1>
         </header>
         <div id="header2"></div>
         <div id="header3"></div>
         <div class="container">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas neque, tenetur officia incidunt obcaecati. Suscipit libero eius maiores aspernatur quibusdam minima magni perferendis dolores consequuntur molestiae. Commodi numquam, ipsa quae.</p>
-
-            <button type="button" id="startBtn" class="btn btn-success">Start</button>
-            <button type="button" id="stopBtn" class="btn btn-danger" disabled="">Stop</button>
-            <input type="file" id="filePicker" accept=".wav" style="display:none"/>
-
+        
+    <div id="content" >
+        <table width="100%" >
+            <tr style="display:none">
+                <td></td>
+                <td>
+                    <h1 style="font-weight:500;">Speech Recognition</h1>
+                    <h2 style="font-weight:500;">Microsoft Cognitive Services</h2>
+                </td>
+            </tr>
+            <tr id="hidden">
+                <td align="right">Subscription</td>
+                <td><input id="key" type="text" size="40" value="d4edcc3a4e3442799b5d85ac3e2c03d4"></td>
+            </tr>
+            <tr style="display:none">
+                <td align="right">Language:</td>
+                <td align="left">
+                    <select id="languageOptions">
+                        <option value="ar-EG">Arabic - EG</option>
+                        <option value="zh-CN">Chinese - CN</option>
+                        <option value="en-GB">English - GB</option>
+                        <option value="en-US" selected="selected">English - US</option>
+                        <option value="fr-FR">French - FR</option>
+                        <option value="de-DE">German - DE</option>
+                        <option value="it-IT">Italian - IT</option>
+                        <option value="ja-JP">Japanese - JP</option>
+                        <option value="pt-BR">Portuguese - BR</option>
+                        <option value="ru-RU">Russian - RU</option>
+                        <option value="es-ES">Spanish - ES</option>
+                    </select>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td align="right">Recognition Mode:</td>
+                <td align="left">
+                    <select id="recognitionMode">
+                        <option value="Interactive">Interactive</option>
+                        <option value="Conversation">Conversation</option>
+                        <option value="Dictation">Dictation</option>
+                    </select>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td align="right">Format:</td>
+                <td align="left">
+                    <select id="formatOptions">
+                        <option value="Simple" selected="selected">Simple Result</option>
+                        <option value="Detailed">Detailed Result</option>
+                    </select>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td align="right">Input:</td>
+                <td align="left">
+                    <select id="inputSource">
+                        <option value="Mic" selected="selected">Microphone</option>
+                        <option value="File">Audio File</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button type="button" id="startBtn" class="btn btn-success">Start</button>
+                    <button type="button" id="stopBtn" disabled="disabled" class="btn btn-danger">Stop</button>
+                    <button type="button" id="refreshBtn" class="btn btn-primary" onClick="window.location.reload();">Clear</button>
+                    <input type="file" id="filePicker" accept=".wav" style="display:none"/>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td></td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>Results:</td>
+                            <td>Current hypothesis:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="phraseDiv" style="display: none;width:500px;height:200px"></textarea>
+                            </td>
+                            <td style="vertical-align: top">
+                                <span id="hypothesisDiv" style="width:0px;height:0px;display:none;"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">Status:</td>
+                <td align="left"><span id="statusDiv"></span></td>
+            </tr>
+        </table>
+    </div>
             <div class="container" id="info-card">
                 <div class="row">
                     <div class="col-md-7">
@@ -53,22 +143,22 @@
                         </div>
                         
                     </div>
-                    <div class="col-md-5">  
+                    <div class="col-md-5">
+                        <span id="warn">WARNING: Alerting Nearest Tower.</span> 
+                        <div id="bottom-right">
+                            <span id="status">STATUS</span>
+                        </div>
                         <div id="top-right">
 
                             <ul class="list-group list-group-flush" id="post-it">
-                            <li class="list-group-item"><b>Frequency:</b> </li>
-                            <li class="list-group-item"><b>Ident:</b> </li>
-                            <li class="list-group-item"><b>Runway:</b> </li>
-                            <li class="list-group-item"><b>Airport:</b> </li>
-
-                            <li id="phraseDiv" class="list-group-item"><b>Full transmission:</b> </li>
+                            <li class="list-group-item" id="frequency"><b>Frequency:</b> </li>
+                            <li class="list-group-item" id="ident"><b>Ident:</b> </li>
+                            <li class="list-group-item" id="runway"><b>Runway:</b> </li>
+                            <li class="list-group-item" id="airport"><b>Airport:</b> </li>
+                            <li class="list-group-item" id="output" style="overflow-y: scroll;"><b>Full transmission:</b> </li>
                             </ul>
                             <span id="hypothesisDiv" style="width:200px;height:200px;display:block;"></span>
                             <span id="statusDiv"></span>
-                        </div>
-                        <div id="weather">
-                            <img id="vmap" src="http://vfrmap.com/api?req=map&type=sectc&lat=48.648103&lon=-123.428660&zoom=10">
                         </div>
                     </div>
                 </div>
@@ -76,206 +166,6 @@
         
 
         </div>
-  <!-- SDK REFERENCE -->
-    <script src="../../distrib/speech.sdk.bundle.js"></script>
-   <!-- SDK USAGE -->
-    <script>
-        // On document load resolve the SDK dependency
-        function Initialize(onComplete) {
-            if (!!window.SDK) {
-                // document.getElementById('content').style.display = 'block';
-                // document.getElementById('warning').style.display = 'none';
-                onComplete(window.SDK);
-            }
-        }
-
-
-
-        // Setup the recognizer
-        function RecognizerSetup(SDK, language) {
-            recognitionMode = SDK.RecognitionMode.Dictation;
-            subscriptionKey = '5b2ad77d6b9046b';
-            format = SDK.SpeechResultFormat['Simple']
-
-
-            var recognizerConfig = new SDK.RecognizerConfig(
-                new SDK.SpeechConfig(
-                    new SDK.Context(
-                        new SDK.OS(navigator.userAgent, "Browser", null),
-                        new SDK.Device("SpeechSample", "SpeechSample", "1.0.00000"))),
-                recognitionMode,
-                language, // Supported languages are specific to each recognition mode. Refer to docs.
-                format); // SDK.SpeechResultFormat.Simple (Options - Simple/Detailed)
-
-
-            var authentication = function() {
-                return new SDK.CognitiveSubscriptionKeyAuthentication(subscriptionKey + '88d02edd185bcc933');
-
-            }();
-
-            var files = document.getElementById('filePicker').files;
-            if (!files.length) {
-                return SDK.CreateRecognizer(recognizerConfig, authentication);
-            } else {
-                return SDK.CreateRecognizerWithFileAudioSource(recognizerConfig, authentication, files[0]);
-            }
-        }
-
-
-        // Start the recognition
-        function RecognizerStart(SDK, recognizer) {
-            recognizer.Recognize((event) => {
-                /*
-                 Alternative syntax for typescript devs.
-                 if (event instanceof SDK.RecognitionTriggeredEvent)
-                */
-                switch (event.Name) {
-                    case "RecognitionTriggeredEvent" :
-                        UpdateStatus("Initializing");
-                        break;
-                    case "ListeningStartedEvent" :
-                        UpdateStatus("Listening");
-                        break;
-                    case "RecognitionStartedEvent" :
-                        UpdateStatus("Listening_Recognizing");
-                        break;
-                    case "SpeechStartDetectedEvent" :
-                        UpdateStatus("Listening_DetectedSpeech_Recognizing");
-                        console.log(JSON.stringify(event.Result)); // check console for other information in result
-                        break;
-                    case "SpeechHypothesisEvent" :
-                        UpdateRecognizedHypothesis(event.Result.Text, false);
-                        console.log(JSON.stringify(event.Result)); // check console for other information in result
-                        break;
-                    case "SpeechFragmentEvent" :
-                        UpdateRecognizedHypothesis(event.Result.Text, true);
-                        console.log(JSON.stringify(event.Result.Text)); // check console for other information in result
-                        break;
-                    case "SpeechEndDetectedEvent" :
-                        OnSpeechEndDetected();
-                        UpdateStatus("Processing_Adding_Final_Touches");
-                        console.log(JSON.stringify(event.Result)); // check console for other information in result
-                        break;
-                    case "SpeechDetailedPhraseEvent" :
-                        UpdateRecognizedPhrase(JSON.stringify(event.Result));
-                        break;
-                    case "SpeechSimplePhraseEvent" :
-                        console.log(event)
-                        UpdateRecognizedPhrase(JSON.stringify(event.Result.DisplayText, null, 3));
-                        break;
-                    case "RecognitionEndedEvent" :
-                        OnComplete();
-                        UpdateStatus("Idle");
-                        console.log(JSON.stringify(event)); // Debug information
-                        break;
-                    default:
-                        console.log(JSON.stringify(event)); // Debug information
-                }
-            })
-            .On(() => {
-                // The request succeeded. Nothing to do here.
-            },
-            (error) => {
-                console.error(error);
-            });
-        }
-
-        // Stop the Recognition.
-        function RecognizerStop(SDK, recognizer) {
-            // recognizer.AudioSource.Detach(audioNodeId) can be also used here. (audioNodeId is part of ListeningStartedEvent)
-            recognizer.AudioSource.TurnOff();
-        }
-    </script>
-
-    <!-- Browser Hooks -->
-    <script>
-        var startBtn, stopBtn, hypothesisDiv, phraseDiv, statusDiv;
-        var key, languageOptions, inputSource, filePicker;
-        var SDK;
-        var recognizer;
-        var previousSubscriptionKey;
-
-        document.addEventListener("DOMContentLoaded", function () {
-            startBtn = document.getElementById("startBtn");
-            stopBtn = document.getElementById("stopBtn");
-            phraseDiv = document.getElementById("phraseDiv");
-            statusDiv = document.getElementById("statusDiv");
-            hypothesisDiv = document.getElementById("hypothesisDiv");
-            filePicker = document.getElementById('filePicker');
-
-
-            startBtn.addEventListener("click", function () {
-                if (!recognizer) {
-                    //get key from env
-                    Setup();
-                }
-
-                hypothesisDiv.innerHTML = "";
-                phraseDiv.innerHTML = "";
-                RecognizerStart(SDK, recognizer);
-                startBtn.disabled = true;
-                stopBtn.disabled = false;
-            });
-
-            stopBtn.addEventListener("click", function () {
-                RecognizerStop(SDK, recognizer);
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-            });
-
-            Initialize(function (speechSdk) {
-                SDK = speechSdk;
-                startBtn.disabled = false;
-            });
-        });
-
-        function Setup() {
-            if (recognizer != null) {
-                RecognizerStop(SDK, recognizer);
-            }
-            recognizer = RecognizerSetup(SDK, 'en-US');
-        }
-
-        function UpdateStatus(status) {
-            statusDiv.innerHTML = status;
-        }
-
-
-        function UpdateRecognizedHypothesis(text, append) {
-            if (append)
-                hypothesisDiv.innerHTML += text + " ";
-            else
-                hypothesisDiv.innerHTML = text;
-
-            var length = hypothesisDiv.innerHTML.length;
-            if (length > 403) {
-                hypothesisDiv.innerHTML = "..." + hypothesisDiv.innerHTML.substr(length-400, length);
-            }
-        }
-
-
-        function OnSpeechEndDetected() {
-            stopBtn.disabled = true;
-        }
-
-
-        function UpdateRecognizedPhrase(json) {
-            if(localStorage.result){
-                json += '\n'
-                json += localStorage.getItem('result')
-            }
-            hypothesisDiv.innerHTML = "";
-            phraseDiv.innerHTML = json;
-            localStorage.setItem('result', json)
-        }
-
-        function OnComplete() {
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-        }
-
-    </script>
-
 
         <div id="footer3"></div>
         <div id="footer2"></div>
@@ -396,6 +286,7 @@
                         console.log(JSON.stringify(event.Result)); // check console for other information in result
                         break;
                     case "SpeechSimplePhraseEvent" :
+                        sentiment(JSON.stringify(event.Result.DisplayText))
                         UpdateRecognizedPhrase(JSON.stringify(event.Result, null, 3));
                         break;
                     case "SpeechDetailedPhraseEvent" :
@@ -534,19 +425,87 @@
         }
 
         let output = []
+        var freqMarked = false
+        var identMarked = false
+        var runwayMarked = false
+        var airportMarked = false
+        let airports = {
+            'victoria': [48.648103, -123.428660],
+            'portland': [45.589769, -122.595094],
+            'spokane': [47.621748, -117.534812]
+        }
 
         function UpdateRecognizedPhrase(json) {
             hypothesisDiv.innerHTML = "";
             phraseDiv.innerHTML += json + "\n";
 
             outputContainer = document.getElementById("output")
-            output.push(JSON.parse(json)['DisplayText'])
+            if(JSON.parse(json)['DisplayText'].toLowerCase() != 'replay.'){
+                output.push(JSON.parse(json)['DisplayText'])
+                var li = document.createElement("li")
+                outputContainer.appendChild(li)
+                var element = output.length
+                li.innerHTML += output[element - 1] + "\n";
+            } else {
+                let string = ""
+                for(var i = 0; i < output.length; i++){
+                    string += output[i].slice(0, -1) + " "
+                }
+                console.log(string)
+                replay(string)
+            }
 
-            var para = document.createElement("li")
-            outputContainer.appendChild(para)
-            element = output.length
-            para.innerHTML += output[element - 1] + "\n";
-            console.log('output', output)
+            for(var i = 0; i < output.length; i++){
+
+                if(output[i].toLowerCase().includes('frequency') && !freqMarked){
+                    console.log('output[i]', output[i])
+                    var freqEl = document.getElementById("frequency")
+                    freqEl.innerHTML += output[i]
+                    freqMarked = true
+                }
+
+                if(output[i].toLowerCase().includes('ident') && !identMarked){
+                    console.log('output[i]', output[i])
+                    var ident = document.getElementById("ident")
+                    ident.innerHTML += output[i]
+                    identMarked = true
+                }
+
+                if(output[i].toLowerCase().includes('runway') && !runwayMarked){
+                    console.log('output[i]', output[i])
+                    var runway = document.getElementById("runway")
+                    runway.innerHTML += output[i]
+                    runwayMarked = true
+                }
+
+                if(output[i].toLowerCase().includes('airport') && !airportMarked || output[i].toLowerCase().includes('ground') && !airportMarked || output[i].toLowerCase().includes('tower') && !airportMarked){
+                    console.log('output[i]', output[i])
+                    var airport = document.getElementById("airport")
+                    airport.innerHTML += output[i]
+                    airportMarked = true
+
+                    function initMap() {
+                        var uluru = {lat: lat, lng: long};
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                          zoom: 14,
+                          center: uluru,
+                          mapTypeId: 'satellite'
+                      });
+                    }
+                    if(output[i].toLowerCase().includes('portland')){
+                        var lat = airports['portland'][0]
+                        var long = airports['portland'][1]
+                        initMap()
+                    } else if (output[i].toLowerCase().includes('spokane')){
+                        var lat = airports['spokane'][0]
+                        var long = airports['spokane'][1]
+                        initMap()
+                    }         
+                }
+                    
+
+            }
+
         }
 
         function OnComplete() {
@@ -554,7 +513,62 @@
             stopBtn.disabled = true;
 
         }
+
+        function replay(tts){
+        $.ajax({
+                method:"GET",
+                url: "https://johnfirstnode.mybluemix.net/tts?text_to_say=" + tts
+                    })
+    }
+
+    function sentiment(phrase){
+    var params = {
+    };
+    var body = {
+      "documents": [
+        {
+          "language": "en-US",
+          "id": "3424344234234",
+          "text": phrase
+        }
+      ]
+    }
+    $.ajax({
+        url: "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment?" + $.param(params),
+        beforeSend: function(xhrObj){
+            // Request headers
+            xhrObj.setRequestHeader("Content-Type","application/json");
+            xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","30260b2632ae4476992b546e95c37eb9");
+        },
+        type: "POST",
+        // Request body
+        data: JSON.stringify(body),
+    })
+    .done(function(data) {
+        const score = data.documents[0].score
+        var elem = document.getElementById('bottom-right')
+        var war = document.getElementById("warn")
+        if (score < 0.2) {
+            elem.style.backgroundColor = "red";
+            war.style.display = "inline"; }
+        else if (score < 0.5) {
+            elem.style.backgroundColor = "orange";
+            war.style.display = "none";
+        }
+        else {
+            elem.style.backgroundColor = "green";
+            war.style.display = "none";
+        }
+    })
+    .fail(function(err) {
+        alert("error");
+        console.log(err)
+    });
+}
+
     </script>
+
+    
 
     </body>
 </html>
