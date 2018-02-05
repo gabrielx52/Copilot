@@ -179,29 +179,23 @@
     <script>
         // On document load resolve the SDK dependency
         function Initialize(onComplete) {
-            if (!!window.SDK) {
-                document.getElementById('content').style.display = 'block';
-                document.getElementById('warning').style.display = 'none';
-                onComplete(window.SDK);
-            }
+            if (!!window.SDK)
+                onComplete(window.SDK)
+            // if (!!window.SDK) {
+            //     document.getElementById('content').style.display = 'block';
+            //     document.getElementById('warning').style.display = 'none';
+            //     onComplete(window.SDK);
+            // }
         }
         
         // Setup the recognizer
-        function RecognizerSetup(SDK, recognitionMode, language, format, subscriptionKey) {
-            
-            switch (recognitionMode) {
-                case "Interactive" :
-                    recognitionMode = SDK.RecognitionMode.Interactive;    
-                    break;
-                case "Conversation" :
-                    recognitionMode = SDK.RecognitionMode.Conversation;    
-                    break;
-                case "Dictation" :
-                    recognitionMode = SDK.RecognitionMode.Dictation;    
-                    break;
-                default:
-                    recognitionMode = SDK.RecognitionMode.Interactive;
-            }
+        function RecognizerSetup(SDK) {
+            recognitionMode = SDK.RecognitionMode.Dictation;
+            language = 'en-US';
+            subscriptionKey = '5b2ad77d6b9046b88d02edd185bcc933';
+            format = 'Simple';
+
+
 
             var recognizerConfig = new SDK.RecognizerConfig(
                 new SDK.SpeechConfig(
@@ -331,49 +325,40 @@
             phraseDiv = document.getElementById("phraseDiv");
             hypothesisDiv = document.getElementById("hypothesisDiv");
             statusDiv = document.getElementById("statusDiv");
-            key = document.getElementById("key");
-            languageOptions = document.getElementById("languageOptions");
-            formatOptions = document.getElementById("formatOptions");
-            inputSource = document.getElementById("inputSource");
-            recognitionMode = document.getElementById("recognitionMode");
+            // key = document.getElementById("key");
+            // languageOptions = document.getElementById("languageOptions");
+            // formatOptions = document.getElementById("formatOptions");
+            // inputSource = document.getElementById("inputSource");
+            // recognitionMode = document.getElementById("recognitionMode");
             filePicker = document.getElementById('filePicker');
 
-            languageOptions.addEventListener("change", Setup);
-            formatOptions.addEventListener("change", Setup);
-            recognitionMode.addEventListener("change", Setup);
+            // languageOptions.addEventListener("change", Setup);
+            // formatOptions.addEventListener("change", Setup);
+            // recognitionMode.addEventListener("change", Setup);
 
             startBtn.addEventListener("click", function () {
-                if (key.value == "" || key.value == "YOUR_BING_SPEECH_API_KEY") {
-                    alert("Please enter your Bing Speech subscription key!");
-                    return;
+                if (!recognizer) {
+                    Setup();
                 }
-                if (inputSource.value === "File") {
-                    filePicker.click();
-                } else {
-                    if (!recognizer || previousSubscriptionKey != key.value) {
-                        previousSubscriptionKey = key.value;
-                        Setup();
-                    }
 
-                    hypothesisDiv.innerHTML = "";
-                    phraseDiv.innerHTML = "";
-                    RecognizerStart(SDK, recognizer);
-                    startBtn.disabled = true;
-                    stopBtn.disabled = false;
-                }                
+                hypothesisDiv.innerHTML = "";
+                phraseDiv.innerHTML = "";
+                RecognizerStart(SDK, recognizer);
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
             });
 
-            key.addEventListener("focus", function () {
-               if (key.value == "YOUR_BING_SPEECH_API_KEY") {
-                   key.value = "";
-               }
-            });
+            // key.addEventListener("focus", function () {
+            //    if (key.value == "YOUR_BING_SPEECH_API_KEY") {
+            //        key.value = "";
+            //    }
+            // });
 
-            key.addEventListener("focusout", function () {
-               if (key.value == "") {
-                   key.value = "YOUR_BING_SPEECH_API_KEY";
-               }
-            });
+            // key.addEventListener("focusout", function () {
+            //    if (key.value == "") {
+            //        key.value = "YOUR_BING_SPEECH_API_KEY";
+            //    }
+            // });
 
             filePicker.addEventListener("change", function () {
                 Setup();
@@ -401,7 +386,7 @@
             if (recognizer != null) {
                 RecognizerStop(SDK, recognizer);
             }
-            recognizer = RecognizerSetup(SDK, recognitionMode.value, languageOptions.value, SDK.SpeechResultFormat[formatOptions.value], key.value);
+            recognizer = RecognizerSetup(SDK);
         }
 
         function UpdateStatus(status) {
